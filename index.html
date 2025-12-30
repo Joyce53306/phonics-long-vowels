@@ -3,31 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Long Vowels Level Up! 🚀</title>
+    <title>Long Vowel World 🚀</title>
     <style>
         :root { --pink: #f8a5c2; --blue: #778beb; --bg: #fffbe6; --gold: #feca57; --accent: #54a0ff; --green: #b2ff59; }
         body { font-family: 'Arial Rounded MT Bold', sans-serif; background-color: var(--bg); text-align: center; margin: 0; padding: 10px; }
-        .container { max-width: 600px; margin: auto; padding: 25px; background: white; border-radius: 40px; box-shadow: 0 15px 0 #f0e68c; min-height: 90vh; }
+        .container { max-width: 600px; margin: auto; padding: 25px; background: white; border-radius: 40px; box-shadow: 0 15px 0 #f0e68c; min-height: 95vh; }
         
         .header { color: var(--accent); font-size: 32px; font-weight: bold; margin-bottom: 10px; }
         .stars { font-size: 45px; color: var(--gold); margin-bottom: 15px; min-height: 60px; }
         .victory-jump { animation: jump 0.5s ease infinite alternate; }
         @keyframes jump { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
-        /* 長母音選單 */
-        .vowel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        .vowel-item { padding: 20px; background: #e3f2fd; color: #1976D2; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 28px; border: 1px solid #bbdefb; box-shadow: 0 5px #90caf9; }
+        /* 網格選單：一行 2 個大按鈕，方便點擊 */
+        .vowel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .vowel-item { padding: 25px 10px; background: #e3f2fd; color: #1976D2; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 26px; border: 1px solid #bbdefb; box-shadow: 0 5px #90caf9; }
         .vowel-item:active { transform: translateY(3px); box-shadow: none; }
 
-        /* 圓圈按鈕 */
         .choice-container { display: flex; justify-content: space-around; margin: 30px 0; }
         .circle-btn { width: 145px; height: 145px; border-radius: 50%; border: 8px solid white; font-size: 26px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 0 rgba(0,0,0,0.05); }
         .circle-btn.pink { background-color: var(--pink); color: #ad1457; }
         .circle-btn.blue { background-color: #e1f5fe; color: #0288d1; }
 
-        /* 錄音與控制區 */
         .recording-box { background: #fdfdfd; border: 2px solid #f0f0f0; border-radius: 30px; padding: 20px; margin-top: 20px; }
-        .rec-btn { width: 75px; height: 75px; border-radius: 50%; border: none; background: #ff5252; color: white; font-size: 32px; cursor: pointer; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(255,82,82,0.3); }
+        .rec-btn { width: 75px; height: 75px; border-radius: 50%; border: none; background: #ff5252; color: white; font-size: 32px; cursor: pointer; margin-bottom: 10px; }
         .play-voice-btn { width: 100%; background: var(--green); border: none; padding: 15px; border-radius: 25px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #8bc34a; }
 
         .hidden { display: none !important; }
@@ -40,18 +38,12 @@
         <h2 class="header">Long Vowel World 🚀</h2>
         <div class="stars">✨✨✨</div>
         <p style="color: #888; margin-bottom: 20px;">Pick a Sound to Start!</p>
-        <div class="vowel-grid">
-            <div class="vowel-item" onclick="startLevel('a_e')">a_e</div>
-            <div class="vowel-item" onclick="startLevel('i_e')">i_e</div>
-            <div class="vowel-item" onclick="startLevel('o_e')">o_e</div>
-            <div class="vowel-item" onclick="startLevel('u_e')">u_e</div>
-            <div class="vowel-item" onclick="startLevel('ee')">ee</div>
-            <div class="vowel-item" onclick="startLevel('ea')">ea</div>
-        </div>
+        <div class="vowel-grid" id="vowel-menu">
+            </div>
     </div>
 
     <div id="game-view" class="hidden">
-        <div class="header" id="current-vowel-display">Long Vowel: a_e</div>
+        <div class="header" id="current-vowel-display">Long Vowel</div>
         <div class="stars" id="star-display">☆☆☆☆☆</div>
         
         <div class="choice-container">
@@ -62,7 +54,7 @@
         <div id="feedback-area" class="hidden">
             <div class="recording-box">
                 <button id="recBtn" class="rec-btn" onclick="toggleRecording()">🎤</button>
-                <div style="color: #999; font-size: 14px; margin-bottom: 10px;">點一下開始錄音</div>
+                <div style="color: #999; font-size: 14px; margin-bottom: 10px;">點一下錄音</div>
                 <button id="playRecBtn" class="play-voice-btn hidden" onclick="playBack()">▶️ 聽我的聲音</button>
             </div>
             <button onclick="nextRound()" style="margin-top:20px; border:none; background:var(--accent); color:white; border-radius:25px; padding:15px 50px; font-size:22px; cursor:pointer; font-weight:bold; box-shadow: 0 5px #2e86de;">NEXT ➔</button>
@@ -74,25 +66,33 @@
 <script>
     const victoryAudio = new Audio('https://www.myinstants.com/media/sounds/final-fantasy-vii-victory-fanfare-1.mp3');
 
+    // 包含你的原始單字 + 我補充的豐富單字庫
     const longVowelsData = {
-        'a_e': ["cake", "lake", "gate", "face", "game", "plate"],
-        'i_e': ["bike", "kite", "five", "nice", "pine", "smile"],
-        'o_e': ["bone", "rope", "home", "nose", "rose", "hole"],
-        'u_e': ["tube", "cube", "mute", "cute", "mule", "june"],
-        'ee': ["bee", "tree", "seed", "feet", "deep", "sleep"],
-        'ea': ["leaf", "tea", "eat", "meat", "seal", "beach"]
+        'Long A': ["cake", "case", "game", "tape", "rain", "pail", "hay", "say", "wave", "tail", "pay", "mail", "wait", "day", "lake", "gate", "snake", "whale", "gray", "paint"],
+        'Long E': ["bee", "see", "Eve", "Pete", "tea", "leaf", "sea", "read", "feet", "bean", "eat", "jeep", "reed", "seat", "pea", "green", "cheese", "tree", "meat", "sleep"],
+        'Long I': ["bike", "kite", "rice", "mice", "night", "fight", "light", "right", "ice", "like", "knight", "pie", "lie", "tie", "five", "lime", "cry", "fly", "sky", "smile", "high"],
+        'Long O': ["rose", "hose", "nose", "rope", "boat", "coat", "soap", "road", "coke", "bone", "toad", "home", "bowl", "row", "snow", "goat", "show", "slow", "cone", "note"],
+        'Long U': ["cute", "mule", "cube", "huge", "glue", "blue", "fruit", "suit", "nude", "duke", "Sue", "cue", "fuel", "mute", "few", "pew", "tube", "june", "flute", "juice"]
     };
 
     let currentVowel = '', currentTarget = '', score = 0, isRecording = false;
     let mediaRecorder, audioChunks = [], audioUrl;
+
+    const menuGrid = document.getElementById('vowel-menu');
+    Object.keys(longVowelsData).forEach(v => {
+        const div = document.createElement('div');
+        div.className = 'vowel-item';
+        div.innerText = v;
+        div.onclick = () => startLevel(v);
+        menuGrid.appendChild(div);
+    });
 
     function startLevel(vowel) {
         currentVowel = vowel;
         score = 0;
         document.getElementById('menu-view').classList.add('hidden');
         document.getElementById('game-view').classList.remove('hidden');
-        // 這裡將標題改為 Long Vowel: [母音組合]
-        document.getElementById('current-vowel-display').innerText = "Long Vowel: " + vowel;
+        document.getElementById('current-vowel-display').innerText = vowel;
         nextRound();
     }
 
@@ -102,7 +102,7 @@
         
         const otherVowels = Object.keys(longVowelsData).filter(v => v !== currentVowel);
         const randomVowel = otherVowels[Math.floor(Math.random() * otherVowels.length)];
-        const distractor = longVowelsData[randomVowel][0];
+        const distractor = longVowelsData[randomVowel][Math.floor(Math.random() * longVowelsData[randomVowel].length)];
 
         const options = [currentTarget, distractor].sort(() => Math.random() - 0.5);
         document.getElementById('opt1').innerText = options[0];
@@ -128,7 +128,6 @@
             score++;
             updateStars();
             document.getElementById('feedback-area').classList.remove('hidden');
-            
             if (score > 0 && score % 5 === 0) {
                 victoryAudio.currentTime = 0;
                 victoryAudio.play();
