@@ -1,203 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Long Vowel Hero ✨</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <title>Long Vowels Level Up! 🚀</title>
     <style>
-        :root {
-            --color-a: #FF8A80; --color-e: #81C784; --color-i: #64B5F6;
-            --color-o: #FFB74D; --color-u: #BA68C8; --color-review: #FFD700; /* 金色 */
-        }
-        body {
-            font-family: 'Arial Rounded MT Bold', sans-serif;
-            background-color: #FFFDE7; margin: 0; padding: 10px;
-            display: flex; justify-content: center;
-        }
-        .app-container {
-            background: white; width: 100%; max-width: 500px;
-            border-radius: 40px; border: 6px solid #444;
-            padding: 20px; text-align: center; box-shadow: 0 12px 0 #E6BBAD;
-        }
+        :root { --pink: #f8a5c2; --blue: #778beb; --bg: #fffbe6; --gold: #feca57; --accent: #54a0ff; --green: #b2ff59; }
+        body { font-family: 'Arial Rounded MT Bold', sans-serif; background-color: var(--bg); text-align: center; margin: 0; padding: 10px; }
+        .container { max-width: 600px; margin: auto; padding: 25px; background: white; border-radius: 40px; box-shadow: 0 15px 0 #f0e68c; min-height: 90vh; }
         
-        /* 頂部選單 */
-        .tab-menu {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-            margin-bottom: 20px; background: #F5F5F5;
-            padding: 15px; border-radius: 30px; border: 3px solid #DDD;
-        }
-        .tab-btn {
-            padding: 12px; border-radius: 15px; border: none; color: white;
-            font-weight: bold; font-size: 1.2rem; cursor: pointer;
-            border-bottom: 4px solid rgba(0,0,0,0.2); transition: 0.1s;
-        }
-        .tab-btn.active { transform: scale(0.95); border-bottom: 0; }
+        .header { color: var(--accent); font-size: 32px; font-weight: bold; margin-bottom: 10px; }
+        .stars { font-size: 45px; color: var(--gold); margin-bottom: 15px; min-height: 60px; }
+        .victory-jump { animation: jump 0.5s ease infinite alternate; }
+        @keyframes jump { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
-        /* 練習區 */
-        .play-area { margin-top: 10px; }
-        .speaker-btn {
-            background: #E3F2FD; border: 4px solid #2196F3;
-            border-radius: 30px; padding: 25px; cursor: pointer;
-            width: 100%; box-sizing: border-box; margin-bottom: 15px;
-        }
-        .word-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .opt-btn {
-            background: #FFF; border: 4px solid #CCC; padding: 25px;
-            border-radius: 20px; font-size: 1.8rem; font-weight: bold; cursor: pointer;
-        }
+        /* 長母音選單 */
+        .vowel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .vowel-item { padding: 20px; background: #e3f2fd; color: #1976D2; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 28px; border: 1px solid #bbdefb; box-shadow: 0 5px #90caf9; }
+        .vowel-item:active { transform: translateY(3px); box-shadow: none; }
 
-        /* 錄音回饋區 */
-        .record-panel {
-            margin-top: 20px; padding: 20px; border-radius: 25px;
-            background: #FFF; border: 3px dashed #FFD700; display: none;
-        }
-        .mic-btn {
-            background: #FF5252; color: white; border: none;
-            width: 100%; padding: 15px; border-radius: 20px; font-size: 1.3rem;
-        }
-        .hear-me-big {
-            background: #4CAF50; color: white; border: none;
-            width: 100%; padding: 25px; border-radius: 25px;
-            font-size: 2.2rem; font-weight: bold; margin-top: 15px;
-            border-bottom: 8px solid #2E7D32; display: none;
-            animation: bounce 1.2s infinite;
-        }
-        @keyframes bounce { 0%, 100% {transform: scale(1.1);} 50% {transform: scale(1.15);} }
-        
-        .next-arrow { margin-top: 15px; font-size: 1.3rem; color: #555; cursor: pointer; background: #EEE; border: none; padding: 10px; border-radius: 10px; width: 100%; }
+        /* 圓圈按鈕 */
+        .choice-container { display: flex; justify-content: space-around; margin: 30px 0; }
+        .circle-btn { width: 145px; height: 145px; border-radius: 50%; border: 8px solid white; font-size: 26px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 0 rgba(0,0,0,0.05); }
+        .circle-btn.pink { background-color: var(--pink); color: #ad1457; }
+        .circle-btn.blue { background-color: #e1f5fe; color: #0288d1; }
+
+        /* 錄音與控制區 */
+        .recording-box { background: #fdfdfd; border: 2px solid #f0f0f0; border-radius: 30px; padding: 20px; margin-top: 20px; }
+        .rec-btn { width: 75px; height: 75px; border-radius: 50%; border: none; background: #ff5252; color: white; font-size: 32px; cursor: pointer; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(255,82,82,0.3); }
+        .play-voice-btn { width: 100%; background: var(--green); border: none; padding: 15px; border-radius: 25px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #8bc34a; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <h2 id="modeTitle" style="margin: 0 0 10px 0; color: #555;">Level: A</h2>
-    
-    <div class="tab-menu">
-        <button class="tab-btn" id="btnA" style="background:var(--color-a)" onclick="switchVowel('A')">A</button>
-        <button class="tab-btn" id="btnE" style="background:var(--color-e)" onclick="switchVowel('E')">E</button>
-        <button class="tab-btn" id="btnI" style="background:var(--color-i)" onclick="switchVowel('I')">I</button>
-        <button class="tab-btn" id="btnO" style="background:var(--color-o)" onclick="switchVowel('O')">O</button>
-        <button class="tab-btn" id="btnU" style="background:var(--color-u)" onclick="switchVowel('U')">U</button>
-        <button class="tab-btn" id="btnReview" style="background:var(--color-review); color:#333;" onclick="switchVowel('Review')">⭐ ALL</button>
+<div class="container">
+    <div id="menu-view">
+        <h2 class="header">Long Vowel World 🚀</h2>
+        <div class="stars">✨✨✨</div>
+        <p style="color: #888; margin-bottom: 20px;">Pick a Sound to Start!</p>
+        <div class="vowel-grid">
+            <div class="vowel-item" onclick="startLevel('a_e')">a_e</div>
+            <div class="vowel-item" onclick="startLevel('i_e')">i_e</div>
+            <div class="vowel-item" onclick="startLevel('o_e')">o_e</div>
+            <div class="vowel-item" onclick="startLevel('u_e')">u_e</div>
+            <div class="vowel-item" onclick="startLevel('ee')">ee</div>
+            <div class="vowel-item" onclick="startLevel('ea')">ea</div>
+        </div>
     </div>
 
-    <div class="play-area">
-        <div class="speaker-btn" onclick="playTeacher()">
-            <span style="font-size: 50px;">📢</span>
-            <p style="font-weight:bold; color:#1976D2; margin:0;">Tap to Listen</p>
+    <div id="game-view" class="hidden">
+        <div class="header" id="current-vowel-display">Long Vowel: a_e</div>
+        <div class="stars" id="star-display">☆☆☆☆☆</div>
+        
+        <div class="choice-container">
+            <button id="opt1" class="circle-btn pink" onclick="checkAnswer(this)"></button>
+            <button id="opt2" class="circle-btn blue" onclick="checkAnswer(this)"></button>
         </div>
 
-        <div class="word-grid" id="optionsContainer"></div>
-        <div id="statusMsg" style="font-size: 1.5rem; font-weight: bold; margin: 15px 0;"></div>
-
-        <div class="record-panel" id="recordSection">
-            <button class="mic-btn" id="micBtn">🎤 Start Recording</button>
-            <button class="hear-me-big" id="playMeBtn">👂 HEAR ME!</button>
-            <button class="next-arrow" onclick="nextQuestion()">Next Word ➡️</button>
+        <div id="feedback-area" class="hidden">
+            <div class="recording-box">
+                <button id="recBtn" class="rec-btn" onclick="toggleRecording()">🎤</button>
+                <div style="color: #999; font-size: 14px; margin-bottom: 10px;">點一下開始錄音</div>
+                <button id="playRecBtn" class="play-voice-btn hidden" onclick="playBack()">▶️ 聽我的聲音</button>
+            </div>
+            <button onclick="nextRound()" style="margin-top:20px; border:none; background:var(--accent); color:white; border-radius:25px; padding:15px 50px; font-size:22px; cursor:pointer; font-weight:bold; box-shadow: 0 5px #2e86de;">NEXT ➔</button>
         </div>
+        <button onclick="location.reload()" style="margin-top:30px; background:none; border:none; color:lightgray; cursor:pointer;">⬅ Back to Selection</button>
     </div>
 </div>
 
 <script>
-    const allWords = {
-        'A': ['cake', 'case', 'game', 'tape', 'rain', 'pail', 'hay', 'say', 'wave', 'tail', 'pay', 'mail', 'wait', 'day'],
-        'E': ['bee', 'see', 'Eve', 'Pete', 'tea', 'leaf', 'sea', 'read', 'feet', 'bean', 'eat', 'jeep', 'reed', 'seat', 'pea'],
-        'I': ['bike', 'kite', 'rice', 'mice', 'night', 'fight', 'light', 'right', 'ice', 'like', 'knight', 'pie', 'lie', 'tie', 'five', 'lime', 'cry', 'fly'],
-        'O': ['rose', 'hose', 'nose', 'rope', 'boat', 'coat', 'soap', 'road', 'coke', 'bone', 'toad', 'home', 'bowl', 'row'],
-        'U': ['cute', 'mule', 'cube', 'huge', 'glue', 'blue', 'fruit', 'suit', 'nude', 'duke', 'Sue', 'cue', 'fuel', 'mute', 'few', 'pew']
+    const victoryAudio = new Audio('https://www.myinstants.com/media/sounds/final-fantasy-vii-victory-fanfare-1.mp3');
+
+    const longVowelsData = {
+        'a_e': ["cake", "lake", "gate", "face", "game", "plate"],
+        'i_e': ["bike", "kite", "five", "nice", "pine", "smile"],
+        'o_e': ["bone", "rope", "home", "nose", "rose", "hole"],
+        'u_e': ["tube", "cube", "mute", "cute", "mule", "june"],
+        'ee': ["bee", "tree", "seed", "feet", "deep", "sleep"],
+        'ea': ["leaf", "tea", "eat", "meat", "seal", "beach"]
     };
 
-    let currentGroup = 'A';
-    let currentWord = '';
-    let mediaRecorder;
-    let audioChunks = [];
+    let currentVowel = '', currentTarget = '', score = 0, isRecording = false;
+    let mediaRecorder, audioChunks = [], audioUrl;
 
-    function switchVowel(v) {
-        currentGroup = v;
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('btn' + v).classList.add('active');
-        document.getElementById('modeTitle').innerText = (v === 'Review') ? "⭐ Mixed Review ⭐" : "Level: " + v;
-        nextQuestion();
+    function startLevel(vowel) {
+        currentVowel = vowel;
+        score = 0;
+        document.getElementById('menu-view').classList.add('hidden');
+        document.getElementById('game-view').classList.remove('hidden');
+        // 這裡將標題改為 Long Vowel: [母音組合]
+        document.getElementById('current-vowel-display').innerText = "Long Vowel: " + vowel;
+        nextRound();
     }
 
-    function nextQuestion() {
-        let pool = [];
-        if (currentGroup === 'Review') {
-            // 綜合模式：把五組單字合併在一起
-            pool = [].concat(...Object.values(allWords));
-        } else {
-            pool = allWords[currentGroup];
-        }
-
-        currentWord = pool[Math.floor(Math.random() * pool.length)];
-        let distract = pool[Math.floor(Math.random() * pool.length)];
-        while(distract === currentWord) distract = pool[Math.floor(Math.random() * pool.length)];
-
-        document.getElementById('recordSection').style.display = 'none';
-        document.getElementById('playMeBtn').style.display = 'none';
-        document.getElementById('statusMsg').innerText = "";
+    function nextRound() {
+        const words = longVowelsData[currentVowel];
+        currentTarget = words[Math.floor(Math.random() * words.length)];
         
-        const container = document.getElementById('optionsContainer');
-        container.innerHTML = "";
-        [currentWord, distract].sort(() => Math.random() - 0.5).forEach(w => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-btn';
-            btn.innerText = w;
-            btn.onclick = () => check(w);
-            container.appendChild(btn);
-        });
-        playTeacher();
+        const otherVowels = Object.keys(longVowelsData).filter(v => v !== currentVowel);
+        const randomVowel = otherVowels[Math.floor(Math.random() * otherVowels.length)];
+        const distractor = longVowelsData[randomVowel][0];
+
+        const options = [currentTarget, distractor].sort(() => Math.random() - 0.5);
+        document.getElementById('opt1').innerText = options[0];
+        document.getElementById('opt2').innerText = options[1];
+        
+        document.getElementById('feedback-area').classList.add('hidden');
+        document.getElementById('playRecBtn').classList.add('hidden');
+        document.getElementById('star-display').classList.remove('victory-jump');
+        updateStars();
+        speak(currentTarget);
     }
 
-    function playTeacher() {
-        const u = new SpeechSynthesisUtterance(currentWord);
-        u.lang = 'en-US'; u.rate = 0.7;
-        window.speechSynthesis.speak(u);
+    function speak(t) {
+        window.speechSynthesis.cancel();
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'en-US';
+        m.rate = 0.8;
+        window.speechSynthesis.speak(m);
     }
 
-    function check(selected) {
-        if(selected === currentWord) {
-            // Review 模式下噴更多花
-            const count = (currentGroup === 'Review') ? 300 : 100;
-            confetti({ particleCount: count, spread: 80, origin: { y: 0.7 } });
+    function checkAnswer(el) {
+        if (el.innerText === currentTarget) {
+            score++;
+            updateStars();
+            document.getElementById('feedback-area').classList.remove('hidden');
             
-            document.getElementById('statusMsg').innerText = "🏆 YOU ARE THE BEST!";
-            document.getElementById('statusMsg').style.color = "#4CAF50";
-            document.getElementById('recordSection').style.display = 'block';
+            if (score > 0 && score % 5 === 0) {
+                victoryAudio.currentTime = 0;
+                victoryAudio.play();
+                document.getElementById('star-display').classList.add('victory-jump');
+            } else {
+                playDing();
+            }
         } else {
-            document.getElementById('statusMsg').innerText = "Try Again! 💪";
-            document.getElementById('statusMsg').style.color = "#FF5252";
+            speak("Try again");
         }
     }
 
-    const micBtn = document.getElementById('micBtn');
-    const playMeBtn = document.getElementById('playMeBtn');
-    micBtn.onclick = async () => {
-        if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
+    function updateStars() {
+        let displayScore = score % 5;
+        if (score > 0 && score % 5 === 0) displayScore = 5;
+        document.getElementById('star-display').innerText = "★".repeat(displayScore) + "☆".repeat(5 - displayScore);
+    }
+
+    function playDing() {
+        const ctx = new AudioContext();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.setValueAtTime(523, ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(659, ctx.currentTime + 0.1);
+        g.gain.setValueAtTime(0.05, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        o.start(); o.stop(ctx.currentTime + 0.3);
+    }
+
+    function toggleRecording() {
+        if (!isRecording) {
             audioChunks = [];
-            micBtn.innerText = "🛑 Stop";
-            micBtn.style.background = "#000";
+            mediaRecorder.start();
+            isRecording = true;
+            document.getElementById('recBtn').innerText = "⏹️";
+            document.getElementById('recBtn').style.background = "#333";
         } else {
             mediaRecorder.stop();
-            micBtn.innerText = "🎤 Re-Record";
-            micBtn.style.background = "#FF5252";
+            isRecording = false;
+            document.getElementById('recBtn').innerText = "🎤";
+            document.getElementById('recBtn').style.background = "#ff5252";
         }
+    }
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
         mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
         mediaRecorder.onstop = () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const audio = new Audio(audioUrl);
-            playMeBtn.style.display = 'block';
-            playMeBtn.onclick = () => audio.play();
+            audioUrl = URL.createObjectURL(audioBlob);
+            document.getElementById('playRecBtn').classList.remove('hidden');
         };
-    };
+    });
 
-    window.onload = () => switchVowel('A');
+    function playBack() { new Audio(audioUrl).play(); }
 </script>
-
 </body>
 </html>
